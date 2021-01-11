@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mPeripheralButton.setOnClickListener(this);
         mCentralButton.setOnClickListener(this);
-        askPermission();
+        askLocationPermission();
 
         if (savedInstanceState == null) {
             initBT();
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void askPermission(){
+    private void askLocationPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
