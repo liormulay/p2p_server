@@ -78,7 +78,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!TextUtils.isEmpty(deviceName) && !TextUtils.isEmpty(deviceAddress)) {
+                if ( !TextUtils.isEmpty(deviceAddress)) {
                     if (mListener != null) {
                         mListener.onDeviceItemClick(deviceName, deviceAddress);
                     }
