@@ -1,7 +1,9 @@
 package com.example.blep2p;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.SwitchCompat;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -50,8 +52,8 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
     private BluetoothGattServer mGattServer;
     private HashSet<BluetoothDevice> mBluetoothDevices;
 
-    private Button mNotifyButton;
-    private Switch mEnableAdvertisementSwitch;
+    private AppCompatButton mNotifyButton;
+    private SwitchCompat mEnableAdvertisementSwitch;
     private AppCompatEditText advertiseEditText;
 
 
@@ -59,8 +61,8 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mNotifyButton = (Button) findViewById(R.id.button_notify);
-        mEnableAdvertisementSwitch = (Switch) findViewById(R.id.advertise_switch);
+        mNotifyButton = findViewById(R.id.button_notify);
+        mEnableAdvertisementSwitch = findViewById(R.id.advertise_switch);
         advertiseEditText = findViewById(R.id.advertise_editText);
 
 
@@ -102,7 +104,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
         switch (view.getId()) {
 
             case R.id.advertise_switch:
-                Switch switchToggle = (Switch) view;
+                SwitchCompat switchToggle = (SwitchCompat) view;
                 if (switchToggle.isChecked()) {
                     startAdvertising();
                 } else {
@@ -129,7 +131,6 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
      * Starts BLE Advertising by starting {@code PeripheralAdvertiseService}.
      */
     private void startAdvertising() {
-        // TODO bluetooth - maybe bindService? what happens when closing app?
         startService(getServiceIntent(this));
     }
 
@@ -174,7 +175,6 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
             mGattServer.addService(mSampleService);
         }
     }
-
 
 
     /*

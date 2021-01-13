@@ -3,6 +3,7 @@ package com.example.blep2p;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -30,8 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int PERMISSION_REQUEST_FINE_LOCATION = 4;
 
 
-    private Button mPeripheralButton;
-    private Button mCentralButton;
+    private AppCompatButton mPeripheralButton;
+    private AppCompatButton mCentralButton;
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -41,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPeripheralButton = (Button) findViewById(R.id.button_role_peripheral);
-        mCentralButton = (Button) findViewById(R.id.button_role_central);
+        mPeripheralButton =  findViewById(R.id.button_role_peripheral);
+        mCentralButton =  findViewById(R.id.button_role_central);
 
         mPeripheralButton.setOnClickListener(this);
         mCentralButton.setOnClickListener(this);

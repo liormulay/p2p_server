@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import java.util.ArrayList;
@@ -38,10 +39,10 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
     private String mDeviceName;
     private String mDeviceAddress;
 
-    private TextView mConnectionStatus;
-    private TextView mConnectedDeviceName;
+    private AppCompatTextView mConnectionStatus;
+    private AppCompatTextView mConnectedDeviceName;
     private AppCompatTextView characteristicTextView;
-    private Button mRequestReadCharacteristic;
+    private AppCompatButton mRequestReadCharacteristic;
 
 
     @Override
@@ -58,10 +59,10 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
         }
 
 
-        mConnectionStatus = (TextView) findViewById(R.id.connection_status);
-        mConnectedDeviceName = (TextView) findViewById(R.id.connected_device_name);
+        mConnectionStatus = findViewById(R.id.connection_status);
+        mConnectedDeviceName = findViewById(R.id.connected_device_name);
         characteristicTextView = findViewById(R.id.characteristic_TextView);
-        mRequestReadCharacteristic = (Button) findViewById(R.id.request_read_characteristic);
+        mRequestReadCharacteristic = findViewById(R.id.request_read_characteristic);
         mRequestReadCharacteristic.setOnClickListener(this);
 
 
@@ -113,12 +114,8 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()) {
-
-            case R.id.request_read_characteristic:
-                requestReadCharacteristic();
-                break;
-
+        if (view.getId() == R.id.request_read_characteristic) {
+            requestReadCharacteristic();
         }
     }
 

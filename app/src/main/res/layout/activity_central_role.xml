@@ -44,12 +44,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/button_scan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:background="#BDBDBD"
+            android:background="?attr/colorPrimary"
             android:elevation="4dp"
             android:padding="8dp"
             android:text="@string/scan"

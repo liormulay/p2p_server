@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -23,14 +24,14 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView mDeviceNameView;
-        TextView mDeviceNameAddressView;
+        AppCompatTextView mDeviceNameView;
+        AppCompatTextView mDeviceNameAddressView;
 
         ViewHolder(View view) {
 
             super(view);
-            mDeviceNameView = (TextView) view.findViewById(R.id.device_name);
-            mDeviceNameAddressView = (TextView) view.findViewById(R.id.device_address);
+            mDeviceNameView =  view.findViewById(R.id.device_name);
+            mDeviceNameAddressView = view.findViewById(R.id.device_address);
         }
 
     }

@@ -1,6 +1,7 @@
 package com.example.blep2p;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,13 +25,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- This activity represents the Central/Client role.
- Bluetooth communication flow:
- 1. advertise [peripheral]
- 2. scan [central]
- 3. connect [central]
- 4. notify [peripheral]
- 5. receive [central]
+ * This activity represents the Central/Client role.
+ * Bluetooth communication flow:
+ * 1. advertise [peripheral]
+ * 2. scan [central]
+ * 3. connect [central]
+ * 4. notify [peripheral]
+ * 5. receive [central]
  */
 public class CentralRoleActivity extends BluetoothActivity implements View.OnClickListener, DevicesAdapter.DevicesAdapterListener {
 
@@ -42,7 +43,7 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
 
     private RecyclerView mDevicesRecycler;
     private DevicesAdapter mDevicesAdapter;
-    private Button mScanButton;
+    private AppCompatButton mScanButton;
 
     private ScanCallback mScanCallback;
 
@@ -53,7 +54,7 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mScanButton = (Button) findViewById(R.id.button_scan);
+        mScanButton = findViewById(R.id.button_scan);
         mScanButton.setOnClickListener(this);
 
         mDevicesRecycler = (RecyclerView) findViewById(R.id.devices_recycler_view);
@@ -77,7 +78,7 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
     @Override
     public void onClick(View view) {
 
-        switch(view.getId()) {
+        switch (view.getId()) {
 
             case R.id.button_scan:
                 startBLEScan();
