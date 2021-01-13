@@ -33,6 +33,10 @@
         <service
             android:name=".CentralService"
             android:enabled="true" />
+
+        <service
+            android:name=".PeripheralAdvertiseService"
+            android:enabled="true" />
     </application>
 
 </manifest>

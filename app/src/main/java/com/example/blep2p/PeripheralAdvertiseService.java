@@ -145,7 +145,7 @@ public class PeripheralAdvertiseService extends Service {
         AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
         //dataBuilder.addServiceUuid(Constants.SERVICE_UUID);
         dataBuilder.addServiceUuid(ParcelUuid.fromString(Constants.HEART_RATE_SERVICE_UUID.toString()));
-        dataBuilder.setIncludeDeviceName(true);
+        dataBuilder.setIncludeDeviceName(false);
 
         /* For example - this will cause advertising to fail (exceeds size limit) */
         //String failureData = "asdghkajsghalkxcjhfa;sghtalksjcfhalskfjhasldkjfhdskf";

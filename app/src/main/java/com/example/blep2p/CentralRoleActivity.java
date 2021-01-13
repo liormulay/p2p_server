@@ -203,7 +203,7 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
     @Override
     public void onDeviceItemClick(String deviceName, String deviceAddress) {
 
-        //stopScanning();
+        stopScanning();
 
         Intent intent = new Intent(this, DeviceConnectActivity.class);
         intent.putExtra(DeviceConnectActivity.EXTRAS_DEVICE_NAME, deviceName);
