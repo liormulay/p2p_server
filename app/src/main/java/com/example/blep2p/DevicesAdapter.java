@@ -75,13 +75,10 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
             holder.mDeviceNameAddressView.setText(deviceAddress);
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if ( !TextUtils.isEmpty(deviceAddress)) {
-                    if (mListener != null) {
-                        mListener.onDeviceItemClick(deviceName, deviceAddress);
-                    }
+        holder.itemView.setOnClickListener(view -> {
+            if ( !TextUtils.isEmpty(deviceAddress)) {
+                if (mListener != null) {
+                    mListener.onDeviceItemClick(deviceName, deviceAddress);
                 }
             }
         });

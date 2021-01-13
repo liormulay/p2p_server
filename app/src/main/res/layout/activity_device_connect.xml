@@ -49,6 +49,15 @@
         android:text="@string/server_characteristic_label"
         android:layout_marginTop="32dp"/>
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/characteristic_TextView"
+        android:layout_marginTop="24dp"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:maxLength="1"
+        android:digits="abcdefghijklmnopqrstuvwxyz1234567890"
+        />
+
 
     <ImageView
         android:id="@+id/server_characteristic_value"

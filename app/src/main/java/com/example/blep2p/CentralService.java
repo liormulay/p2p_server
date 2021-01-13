@@ -121,8 +121,8 @@ public class CentralService extends Service {
                 Log.d(MainActivity.TAG, "data format UINT16.");
             }
 
-            int msg = characteristic.getIntValue(format, 0);
-            Log.d(MainActivity.TAG, String.format("message: %d", msg));
+            String msg = characteristic.getStringValue(0);
+            Log.d(MainActivity.TAG, "message: "+ msg);
             intent.putExtra(EXTRA_DATA, msg);
 
         } else {
@@ -140,7 +140,7 @@ public class CentralService extends Service {
                 }
 
                 Log.w(MainActivity.TAG, "broadcastUpdate. general profile");
-                intent.putExtra(EXTRA_DATA, -1);
+                intent.putExtra(EXTRA_DATA, "");
                 //intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
             }
         }

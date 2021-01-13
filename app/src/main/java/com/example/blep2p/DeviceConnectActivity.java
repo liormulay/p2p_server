@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,7 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
     private TextView mConnectionStatus;
     private TextView mConnectedDeviceName;
     private ImageView mServerCharacteristic;
+    private AppCompatTextView characteristicTextView;
     private Button mRequestReadCharacteristic;
 
 
@@ -65,6 +68,7 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
         mConnectionStatus = (TextView) findViewById(R.id.connection_status);
         mConnectedDeviceName = (TextView) findViewById(R.id.connected_device_name);
         mServerCharacteristic = (ImageView) findViewById(R.id.server_characteristic_value);
+        characteristicTextView = findViewById(R.id.characteristic_TextView);
         mRequestReadCharacteristic = (Button) findViewById(R.id.request_read_characteristic);
         mRequestReadCharacteristic.setOnClickListener(this);
 
@@ -206,7 +210,8 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
                     break;
 
                 case CentralService.ACTION_DATA_AVAILABLE:
-                    int msg = intent.getIntExtra(CentralService.EXTRA_DATA, -1);
+//                    int msg = intent.getIntExtra(CentralService.EXTRA_DATA, -1);
+                    String msg = intent.getStringExtra(CentralService.EXTRA_DATA);
                     Log.v(MainActivity.TAG, "ACTION_DATA_AVAILABLE " + msg);
                     updateInputFromServer(msg);
                     break;
@@ -325,9 +330,9 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
         showMsgText(String.format(getString(R.string.characteristic_value_received), msg));
     }
 
-
-
-
+    private void updateInputFromServer(String text) {
+        characteristicTextView.setText(text);
+    }
 
 
 }

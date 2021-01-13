@@ -1,6 +1,7 @@
 package com.example.blep2p;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -13,9 +14,13 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 
@@ -28,13 +33,13 @@ import static com.example.blep2p.Constants.SERVER_MSG_FIRST_STATE;
 import static com.example.blep2p.Constants.SERVER_MSG_SECOND_STATE;
 
 /**
- This activity represents the Peripheral/Server role.
- Bluetooth communication flow:
- 1. advertise [peripheral]
- 2. scan [central]
- 3. connect [central]
- 4. notify [peripheral]
- 5. receive [central]
+ * This activity represents the Peripheral/Server role.
+ * Bluetooth communication flow:
+ * 1. advertise [peripheral]
+ * 2. scan [central]
+ * 3. connect [central]
+ * 4. notify [peripheral]
+ * 5. receive [central]
  */
 public class PeripheralRoleActivity extends BluetoothActivity implements View.OnClickListener {
 
@@ -48,7 +53,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
     private Button mNotifyButton;
     private Switch mEnableAdvertisementSwitch;
     private RadioGroup mCharacteristicValueSwitch;
-
+    private AppCompatEditText advertiseEditText;
 
 
     @Override
@@ -58,15 +63,40 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
         mNotifyButton = (Button) findViewById(R.id.button_notify);
         mEnableAdvertisementSwitch = (Switch) findViewById(R.id.advertise_switch);
         mCharacteristicValueSwitch = (RadioGroup) findViewById(R.id.color_switch);
+        advertiseEditText = findViewById(R.id.advertise_editText);
 
 
         mNotifyButton.setOnClickListener(this);
         mEnableAdvertisementSwitch.setOnClickListener(this);
-        mCharacteristicValueSwitch.setOnCheckedChangeListener((group, checkedId) -> setCharacteristic(checkedId));
+        mCharacteristicValueSwitch.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                PeripheralRoleActivity.this.setCharacteristic(checkedId);
+            }
+        });
 
+        advertiseEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s != null && !s.toString().isEmpty()) {
+                    PeripheralRoleActivity.this.setCharacteristic(s);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         setGattServer();
         setBluetoothService();
     }
+
 
     @Override
     protected int getLayoutId() {
@@ -77,7 +107,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
     @Override
     public void onClick(View view) {
 
-        switch(view.getId()) {
+        switch (view.getId()) {
 
             case R.id.advertise_switch:
                 Switch switchToggle = (Switch) view;
@@ -172,7 +202,15 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
         done each time the user changes a value of a Characteristic
          */
         int value = checkedId == R.id.color_option_1 ? SERVER_MSG_FIRST_STATE : SERVER_MSG_SECOND_STATE;
+//        mSampleCharacteristic.setValue(getValue(value));
+    }
+
+    private void setCharacteristic(CharSequence value) {
         mSampleCharacteristic.setValue(getValue(value));
+    }
+
+    private byte[] getValue(CharSequence value) {
+        return new byte[]{(byte) value.charAt(0)};
     }
 
     private byte[] getValue(int value) {
