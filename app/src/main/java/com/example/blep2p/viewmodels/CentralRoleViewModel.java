@@ -1,5 +1,6 @@
 package com.example.blep2p.viewmodels;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanResult;
 
 import androidx.lifecycle.ViewModel;
@@ -33,10 +34,13 @@ public class CentralRoleViewModel extends ViewModel {
 
     public Observable<DeviceModel> getDevices() {
         return resultsSubject
-                .map(ScanResult::getDevice)
-                .filter(bluetoothDevice -> (!Strings.isNullOrEmpty(bluetoothDevice.getAddress()) &&
-                        (!Strings.isNullOrEmpty(bluetoothDevice.getName()))))
-                .map(bluetoothDevice -> new DeviceModel(bluetoothDevice.getName(), bluetoothDevice.getAddress()));
+                .filter(scanResult -> isFieldsValid(scanResult.getDevice()))
+                .map(results -> new DeviceModel(results.getDevice().getName(), results.getDevice().getAddress(), results.getRssi()));
+    }
+
+    private boolean isFieldsValid(BluetoothDevice device) {
+        return !Strings.isNullOrEmpty(device.getName())
+                && !Strings.isNullOrEmpty(device.getAddress());
     }
 
     public Observable<String> getErrorMessages() {
