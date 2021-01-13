@@ -1,6 +1,5 @@
-package com.example.blep2p;
+package com.example.blep2p.views.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.SwitchCompat;
@@ -20,19 +19,15 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.Button;
-import android.widget.ListAdapter;
-import android.widget.RadioGroup;
-import android.widget.Switch;
+
+import com.example.blep2p.services.PeripheralAdvertiseService;
+import com.example.blep2p.R;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
 import static com.example.blep2p.Constants.BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID;
 import static com.example.blep2p.Constants.HEART_RATE_SERVICE_UUID;
-import static com.example.blep2p.Constants.SERVER_MSG_FIRST_STATE;
-import static com.example.blep2p.Constants.SERVER_MSG_SECOND_STATE;
 
 /**
  * This activity represents the Peripheral/Server role.

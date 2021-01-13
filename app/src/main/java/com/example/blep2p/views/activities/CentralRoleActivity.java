@@ -1,16 +1,13 @@
-package com.example.blep2p;
+package com.example.blep2p.views.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,11 +15,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+
+import com.example.blep2p.adapters.DevicesAdapter;
+import com.example.blep2p.R;
+import com.example.blep2p.SampleScanCallback;
+import com.example.blep2p.model.DeviceModel;
+import com.example.blep2p.viewmodels.CentralRoleViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 /**
  * This activity represents the Central/Client role.
@@ -49,15 +53,20 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
 
     private Handler mHandler;
 
+    private CentralRoleViewModel viewModel;
+
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new CentralRoleViewModel();
 
         mScanButton = findViewById(R.id.button_scan);
         mScanButton.setOnClickListener(this);
 
-        mDevicesRecycler = (RecyclerView) findViewById(R.id.devices_recycler_view);
+        mDevicesRecycler = findViewById(R.id.devices_recycler_view);
         mDevicesRecycler.setHasFixedSize(true);
         mDevicesRecycler.setLayoutManager(new LinearLayoutManager(this));
 
@@ -66,6 +75,17 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
 
         mHandler = new Handler(Looper.getMainLooper());
 
+        viewModel = new CentralRoleViewModel();
+
+        subscribe();
+    }
+
+    private void subscribe() {
+        compositeDisposable.add(viewModel.getDevices()
+        .subscribe(deviceModel -> mDevicesAdapter.add(deviceModel)));
+
+        compositeDisposable.add(viewModel.getErrorMessages()
+        .subscribe(this::showMsgText));
     }
 
 
@@ -78,12 +98,8 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()) {
-
-            case R.id.button_scan:
-                startBLEScan();
-                break;
-
+        if (view.getId() == R.id.button_scan) {
+            startBLEScan();
         }
     }
 
@@ -114,15 +130,10 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
                     Log.d(MainActivity.TAG, "Starting Scanning");
 
                     // Will stop the scanning after a set time.
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            stopScanning();
-                        }
-                    }, SCAN_PERIOD);
+                    mHandler.postDelayed(this::stopScanning, SCAN_PERIOD);
 
                     // Kick off a new scan.
-                    mScanCallback = new SampleScanCallback();
+                    mScanCallback = new SampleScanCallback(viewModel);
                     bluetoothLeScanner.startScan(buildScanFilters(), buildScanSettings(), mScanCallback);
 
                     String toastText =
@@ -151,8 +162,6 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
         List<ScanFilter> scanFilters = new ArrayList<>();
 
         ScanFilter.Builder builder = new ScanFilter.Builder();
-        // Comment out the below line to see all BLE devices around you
-        //builder.setServiceUuid(Constants.SERVICE_UUID);
         scanFilters.add(builder.build());
 
         return scanFilters;
@@ -202,62 +211,19 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
 
 
     @Override
-    public void onDeviceItemClick(String deviceName, String deviceAddress) {
+    public void onDeviceItemClick(DeviceModel deviceModel) {
 
         stopScanning();
 
         Intent intent = new Intent(this, DeviceConnectActivity.class);
-        intent.putExtra(DeviceConnectActivity.EXTRAS_DEVICE_NAME, deviceName);
-        intent.putExtra(DeviceConnectActivity.EXTRAS_DEVICE_ADDRESS, deviceAddress);
+        intent.putExtra(DeviceConnectActivity.EXTRAS_DEVICE_NAME, deviceModel.getDeviceName());
+        intent.putExtra(DeviceConnectActivity.EXTRAS_DEVICE_ADDRESS, deviceModel.getDeviceAddress());
         startActivity(intent);
     }
 
-
-    /**
-     * Custom ScanCallback object - adds to adapter on success, displays error on failure.
-     */
-    private class SampleScanCallback extends ScanCallback {
-
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {
-            super.onBatchScanResults(results);
-            mDevicesAdapter.add(results);
-            logResults(results);
-        }
-
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            super.onScanResult(callbackType, result);
-            mDevicesAdapter.add(result);
-            logResults(result);
-        }
-
-        @Override
-        public void onScanFailed(int errorCode) {
-            super.onScanFailed(errorCode);
-            showMsgText("Scan failed with error: " + errorCode);
-        }
-
-
-        private void logResults(List<ScanResult> results) {
-            if (results != null) {
-                for (ScanResult result : results) {
-                    logResults(result);
-                }
-            }
-        }
-
-        private void logResults(ScanResult result) {
-            if (result != null) {
-                BluetoothDevice device = result.getDevice();
-                if (device != null) {
-                    Log.v(MainActivity.TAG, device.getName() + " " + device.getAddress());
-                    return;
-                }
-            }
-            Log.e(MainActivity.TAG, "error SampleScanCallback");
-        }
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.clear();
+        super.onDestroy();
     }
-
-
 }

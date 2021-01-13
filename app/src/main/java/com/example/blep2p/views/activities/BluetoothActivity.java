@@ -1,4 +1,4 @@
-package com.example.blep2p;
+package com.example.blep2p.views.activities;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -11,6 +11,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.blep2p.R;
 import com.google.android.material.snackbar.Snackbar;
 
 public abstract class BluetoothActivity extends AppCompatActivity {

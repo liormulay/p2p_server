@@ -1,4 +1,4 @@
-package com.example.blep2p;
+package com.example.blep2p.views.activities;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -13,11 +13,12 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
+
+import com.example.blep2p.services.CentralService;
+import com.example.blep2p.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -194,7 +195,6 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
                     break;
 
                 case CentralService.ACTION_DATA_AVAILABLE:
-//                    int msg = intent.getIntExtra(CentralService.EXTRA_DATA, -1);
                     String msg = intent.getStringExtra(CentralService.EXTRA_DATA);
                     Log.v(MainActivity.TAG, "ACTION_DATA_AVAILABLE " + msg);
                     updateInputFromServer(msg);

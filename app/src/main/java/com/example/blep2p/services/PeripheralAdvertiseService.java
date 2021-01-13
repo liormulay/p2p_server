@@ -1,4 +1,4 @@
-package com.example.blep2p;
+package com.example.blep2p.services;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -13,6 +13,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
+
+import com.example.blep2p.Constants;
+import com.example.blep2p.views.activities.MainActivity;
 
 import java.util.concurrent.TimeUnit;
 

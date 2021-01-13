@@ -1,4 +1,4 @@
-package com.example.blep2p;
+package com.example.blep2p.services;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -14,6 +14,8 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.example.blep2p.views.activities.MainActivity;
 
 import java.util.List;
 
@@ -138,7 +140,7 @@ public class CentralService extends Service {
     }
 
     public class LocalBinder extends Binder {
-        CentralService getService() {
+        public CentralService getService() {
             return CentralService.this;
         }
     }
