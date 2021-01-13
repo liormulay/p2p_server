@@ -8,14 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatTextView;
@@ -25,16 +23,12 @@ import java.util.List;
 
 import static com.example.blep2p.Constants.BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID;
 import static com.example.blep2p.Constants.HEART_RATE_SERVICE_UUID;
-import static com.example.blep2p.Constants.SERVER_MSG_FIRST_STATE;
-import static com.example.blep2p.Constants.SERVER_MSG_SECOND_STATE;
 
 
 public class DeviceConnectActivity extends BluetoothActivity implements View.OnClickListener {
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
-    private static final String LIST_NAME = "NAME";
-    private static final String LIST_UUID = "UUID";
 
 
     private CentralService mBluetoothLeService;
@@ -46,7 +40,6 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
 
     private TextView mConnectionStatus;
     private TextView mConnectedDeviceName;
-    private ImageView mServerCharacteristic;
     private AppCompatTextView characteristicTextView;
     private Button mRequestReadCharacteristic;
 
@@ -67,7 +60,6 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
 
         mConnectionStatus = (TextView) findViewById(R.id.connection_status);
         mConnectedDeviceName = (TextView) findViewById(R.id.connected_device_name);
-        mServerCharacteristic = (ImageView) findViewById(R.id.server_characteristic_value);
         characteristicTextView = findViewById(R.id.characteristic_TextView);
         mRequestReadCharacteristic = (Button) findViewById(R.id.request_read_characteristic);
         mRequestReadCharacteristic.setOnClickListener(this);
@@ -83,11 +75,6 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
         Intent gattServiceIntent = new Intent(this, CentralService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
-        /*
-        updateConnectionState(R.string.connected);
-        mRequestReadCharacteristic.setEnabled(true);
-        updateInputFromServer(SERVER_MSG_SECOND_STATE);
-        */
     }
 
 
@@ -288,12 +275,7 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
 
 
     private void updateConnectionState(final int resourceId) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mConnectionStatus.setText(resourceId);
-            }
-        });
+        runOnUiThread(() -> mConnectionStatus.setText(resourceId));
     }
 
 
@@ -306,29 +288,6 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
         return intentFilter;
     }
 
-
-    private void updateInputFromServer(int msg) {
-
-        String color;
-
-        switch (msg) {
-            case SERVER_MSG_FIRST_STATE:
-                color = "#AD1457";
-                break;
-
-            case SERVER_MSG_SECOND_STATE:
-                color = "#6A1B9A";
-                break;
-
-            default:
-                color = "#FFFFFF";
-                break;
-
-        }
-
-        mServerCharacteristic.setBackgroundColor(Color.parseColor(color));
-        showMsgText(String.format(getString(R.string.characteristic_value_received), msg));
-    }
 
     private void updateInputFromServer(String text) {
         characteristicTextView.setText(text);

@@ -52,7 +52,6 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
 
     private Button mNotifyButton;
     private Switch mEnableAdvertisementSwitch;
-    private RadioGroup mCharacteristicValueSwitch;
     private AppCompatEditText advertiseEditText;
 
 
@@ -62,18 +61,11 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
 
         mNotifyButton = (Button) findViewById(R.id.button_notify);
         mEnableAdvertisementSwitch = (Switch) findViewById(R.id.advertise_switch);
-        mCharacteristicValueSwitch = (RadioGroup) findViewById(R.id.color_switch);
         advertiseEditText = findViewById(R.id.advertise_editText);
 
 
         mNotifyButton.setOnClickListener(this);
         mEnableAdvertisementSwitch.setOnClickListener(this);
-        mCharacteristicValueSwitch.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                PeripheralRoleActivity.this.setCharacteristic(checkedId);
-            }
-        });
 
         advertiseEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -173,7 +165,6 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
         no need for notify permission as this is an action the Server initiate.
          */
         mSampleCharacteristic = new BluetoothGattCharacteristic(BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID, BluetoothGattCharacteristic.PROPERTY_NOTIFY | BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PERMISSION_READ);
-        setCharacteristic(); // set initial state
 
         // add the Characteristic to the Service
         mSampleService.addCharacteristic(mSampleCharacteristic);
@@ -185,26 +176,14 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
     }
 
 
-    private void setCharacteristic() {
-        setCharacteristic(R.id.color_option_1);
-    }
 
     /*
     update the value of Characteristic.
     the client will receive the Characteristic value when:
         1. the Client user clicks the "Request Characteristic" button
         2. teh Server user clicks the "Notify Client" button
-    value - can be between 0-255 according to:
-    https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.body_sensor_location.xml
-     */
-    private void setCharacteristic(int checkedId) {
-        /*
-        done each time the user changes a value of a Characteristic
-         */
-        int value = checkedId == R.id.color_option_1 ? SERVER_MSG_FIRST_STATE : SERVER_MSG_SECOND_STATE;
-//        mSampleCharacteristic.setValue(getValue(value));
-    }
 
+     */
     private void setCharacteristic(CharSequence value) {
         mSampleCharacteristic.setValue(getValue(value));
     }
@@ -213,9 +192,6 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
         return new byte[]{(byte) value.charAt(0)};
     }
 
-    private byte[] getValue(int value) {
-        return new byte[]{(byte) value};
-    }
 
     /*
     send to the client the value of the Characteristic,

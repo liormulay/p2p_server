@@ -110,17 +110,6 @@ public class CentralService extends Service {
          */
         if (BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID.equals(characteristic.getUuid())) {
 
-            int flag = characteristic.getProperties();
-            int format = -1;
-
-            if ((flag & 0x01) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_UINT16;
-                Log.d(MainActivity.TAG, "data format UINT16.");
-            } else {
-                format = BluetoothGattCharacteristic.FORMAT_UINT8;
-                Log.d(MainActivity.TAG, "data format UINT16.");
-            }
-
             String msg = characteristic.getStringValue(0);
             Log.d(MainActivity.TAG, "message: "+ msg);
             intent.putExtra(EXTRA_DATA, msg);
@@ -141,7 +130,6 @@ public class CentralService extends Service {
 
                 Log.w(MainActivity.TAG, "broadcastUpdate. general profile");
                 intent.putExtra(EXTRA_DATA, "");
-                //intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
             }
         }
 
