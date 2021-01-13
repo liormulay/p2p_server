@@ -30,7 +30,7 @@ public class DeviceModel {
         this.deviceAddress = deviceAddress;
     }
 
-    public int getRssi() {
-        return rssi;
+    public String getRssi() {
+        return String.valueOf(rssi);
     }
 }

@@ -217,6 +217,7 @@ public class CentralRoleActivity extends BluetoothActivity implements View.OnCli
 
         Intent intent = new Intent(this, DeviceConnectActivity.class);
         intent.putExtra(DeviceConnectActivity.EXTRAS_DEVICE_NAME, deviceModel.getDeviceName());
+        intent.putExtra(DeviceConnectActivity.EXTRAS_DEVICE_RSSI, deviceModel.getRssi());
         intent.putExtra(DeviceConnectActivity.EXTRAS_DEVICE_ADDRESS, deviceModel.getDeviceAddress());
         startActivity(intent);
     }

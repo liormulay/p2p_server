@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 import com.example.blep2p.services.CentralService;
 import com.example.blep2p.R;
+import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import static com.example.blep2p.Constants.HEART_RATE_SERVICE_UUID;
 public class DeviceConnectActivity extends BluetoothActivity implements View.OnClickListener {
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
+    public static final String EXTRAS_DEVICE_RSSI = "DEVICE_RSSI";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
 
@@ -38,10 +40,12 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
     private BluetoothGattCharacteristic mCharacteristic;
 
     private String mDeviceName;
+    private String rssi;
     private String mDeviceAddress;
 
     private AppCompatTextView mConnectionStatus;
     private AppCompatTextView mConnectedDeviceName;
+    private AppCompatTextView rssiTextView;
     private AppCompatTextView characteristicTextView;
     private AppCompatButton mRequestReadCharacteristic;
 
@@ -57,20 +61,28 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
         if (intent != null) {
             mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
             mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+            rssi = intent.getStringExtra(EXTRAS_DEVICE_RSSI);
         }
 
 
         mConnectionStatus = findViewById(R.id.connection_status);
         mConnectedDeviceName = findViewById(R.id.connected_device_name);
+        rssiTextView = findViewById(R.id.rssi_textView);
         characteristicTextView = findViewById(R.id.characteristic_TextView);
         mRequestReadCharacteristic = findViewById(R.id.request_read_characteristic);
         mRequestReadCharacteristic.setOnClickListener(this);
 
 
-        if (TextUtils.isEmpty(mDeviceName)) {
+        if (Strings.isNullOrEmpty(mDeviceName)) {
             mConnectedDeviceName.setText("");
         } else {
             mConnectedDeviceName.setText(mDeviceName);
+        }
+
+        if (Strings.isNullOrEmpty(rssi)) {
+            rssiTextView.setText("");
+        } else {
+            rssiTextView.setText(rssi);
         }
 
 

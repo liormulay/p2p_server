@@ -29,4 +29,5 @@
     <string name="choose_color">Choose color</string>
     <string name="request_read_characteristic">Request Characteristic</string>
     <string name="characteristic_value_received">Characteristic value received: %1$d</string>
+    <string name="rssi">RSSI</string>
 </resources>

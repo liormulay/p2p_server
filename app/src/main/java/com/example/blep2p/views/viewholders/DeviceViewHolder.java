@@ -27,6 +27,6 @@ public class DeviceViewHolder extends RecyclerView.ViewHolder {
     public void bindData(DeviceModel deviceModel) {
         mDeviceNameView.setText(deviceModel.getDeviceName());
         mDeviceNameAddressView.setText(deviceModel.getDeviceAddress());
-        rssiTextView.setText(MessageFormat.format("RSSI: {0}", deviceModel.getRssi()));
+        rssiTextView.setText(String.format("RSSI: %s", deviceModel.getRssi()));
     }
 }
