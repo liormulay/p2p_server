@@ -1,4 +1,4 @@
-package com.example.blep2p.views.activities;
+package com.example.blep2p.activities;
 
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
@@ -60,6 +60,9 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
         mEnableAdvertisementSwitch = findViewById(R.id.advertise_switch);
         advertiseEditText = findViewById(R.id.advertise_editText);
 
+        if (enableNavigation) {
+            mEnableAdvertisementSwitch.setEnabled(true);
+        }
 
         mNotifyButton.setOnClickListener(this);
         mEnableAdvertisementSwitch.setOnClickListener(this);
@@ -230,7 +233,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
                     mBluetoothDevices.add(device);
 
                     msg = "Connected to device: " + device.getAddress();
-                    Log.v(MainActivity.TAG, msg);
+                    Log.v(TAG, msg);
                     showMsgText(msg);
 
                 } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
@@ -238,7 +241,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
                     mBluetoothDevices.remove(device);
 
                     msg = "Disconnected from device";
-                    Log.v(MainActivity.TAG, msg);
+                    Log.v(TAG, msg);
                     showMsgText(msg);
                 }
 
@@ -246,7 +249,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
                 mBluetoothDevices.remove(device);
 
                 msg = getString(R.string.status_error_when_connecting) + ": " + status;
-                Log.e(MainActivity.TAG, msg);
+                Log.e(TAG, msg);
                 showMsgText(msg);
 
             }
@@ -256,7 +259,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
         @Override
         public void onNotificationSent(BluetoothDevice device, int status) {
             super.onNotificationSent(device, status);
-            Log.v(MainActivity.TAG, "Notification sent. Status: " + status);
+            Log.v(TAG, "Notification sent. Status: " + status);
         }
 
 
@@ -269,8 +272,8 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
                 return;
             }
 
-            Log.d(MainActivity.TAG, "Device tried to read characteristic: " + characteristic.getUuid());
-            Log.d(MainActivity.TAG, "Value: " + Arrays.toString(characteristic.getValue()));
+            Log.d(TAG, "Device tried to read characteristic: " + characteristic.getUuid());
+            Log.d(TAG, "Value: " + Arrays.toString(characteristic.getValue()));
 
             mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, characteristic.getValue());
         }
@@ -281,7 +284,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
 
             super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
 
-            Log.v(MainActivity.TAG, "Characteristic Write request: " + Arrays.toString(value));
+            Log.v(TAG, "Characteristic Write request: " + Arrays.toString(value));
 
             mSampleCharacteristic.setValue(value);
 
@@ -300,8 +303,8 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
                 return;
             }
 
-            Log.d(MainActivity.TAG, "Device tried to read descriptor: " + descriptor.getUuid());
-            Log.d(MainActivity.TAG, "Value: " + Arrays.toString(descriptor.getValue()));
+            Log.d(TAG, "Device tried to read descriptor: " + descriptor.getUuid());
+            Log.d(TAG, "Value: " + Arrays.toString(descriptor.getValue()));
 
             mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, descriptor.getValue());
         }
@@ -314,7 +317,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
 
             super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value);
 
-            Log.v(MainActivity.TAG, "Descriptor Write Request " + descriptor.getUuid() + " " + Arrays.toString(value));
+            Log.v(TAG, "Descriptor Write Request " + descriptor.getUuid() + " " + Arrays.toString(value));
 
 
         }

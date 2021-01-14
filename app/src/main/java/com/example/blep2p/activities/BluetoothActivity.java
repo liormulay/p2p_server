@@ -1,10 +1,4 @@
-package com.example.blep2p.views.activities;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.app.ActivityCompat;
+package com.example.blep2p.activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -14,16 +8,25 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import com.example.blep2p.R;
 import com.google.android.material.snackbar.Snackbar;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public abstract class BluetoothActivity extends AppCompatActivity {
 
+
+    private Toolbar mToolbar;
     public static final String TAG = "BluetoothLE";
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 2;
@@ -31,31 +34,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int PERMISSION_REQUEST_FINE_LOCATION = 4;
 
 
-    private AppCompatButton mPeripheralButton;
-    private AppCompatButton mCentralButton;
-
     private BluetoothAdapter mBluetoothAdapter;
+
+    boolean enableNavigation = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(getLayoutId());
 
-        mPeripheralButton =  findViewById(R.id.button_role_peripheral);
-        mCentralButton =  findViewById(R.id.button_role_central);
+        mToolbar = findViewById(R.id.toolbar);
 
-        mPeripheralButton.setOnClickListener(this);
-        mCentralButton.setOnClickListener(this);
+        setToolbar();
         askLocationPermission();
-
         if (savedInstanceState == null) {
             initBT();
         }
-
     }
 
-    private void askLocationPermission(){
+
+    protected abstract int getLayoutId();
+
+    protected abstract int getTitleString();
+
+    protected void onBackButtonClicked() {
+        onBackPressed();
+    }
+
+    protected void showMsgText(int stringId) {
+        showMsgText(getString(stringId));
+    }
+
+    protected void showMsgText(String string) {
+        if (mToolbar != null) {
+            Snackbar snackbar = Snackbar.make(mToolbar, string, Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
+    }
+
+    private void askLocationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -77,8 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         });
                         builder.show();
-                    }
-                    else {
+                    } else {
                         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                         builder.setTitle("Functionality limited");
                         builder.setMessage("Since background location access has not been granted, this app will not be able to discover beacons in the background.  Please go to Settings -> Applications -> Permissions and grant background location access to this app.");
@@ -99,8 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                                     Manifest.permission.ACCESS_BACKGROUND_LOCATION},
                             PERMISSION_REQUEST_FINE_LOCATION);
-                }
-                else {
+                } else {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Functionality limited");
                     builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons.  Please go to Settings -> Applications -> Permissions and grant location access to this app.");
@@ -118,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -153,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case PERMISSION_REQUEST_COARSE_LOCATION:
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    showErrorText(R.string.bt_not_permit_coarse);
+                    showMsgText(R.string.bt_not_permit_coarse);
                 } else {
                     // Everything is supported and enabled.
                     enableNavigation();
@@ -161,6 +176,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
         }
+    }
+
+    private void enableNavigation() {
+        enableNavigation = true;
     }
 
 
@@ -200,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
 
                         // Bluetooth Advertisements are not supported.
-                        showErrorText(R.string.bt_ads_not_supported);
+                        showMsgText(R.string.bt_ads_not_supported);
                     }
                 } else {
 
@@ -211,45 +230,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
 
                 // Bluetooth is not supported.
-                showErrorText(R.string.bt_not_supported);
+                showMsgText(R.string.bt_not_supported);
             }
 
         }
     }
 
 
-    @Override
-    public void onClick(View view) {
+    private void setToolbar() {
+        setSupportActionBar(mToolbar);
 
-        Intent intent = null;
-
-        switch(view.getId()) {
-
-            case R.id.button_role_peripheral:
-                intent = new Intent(this, PeripheralRoleActivity.class);
-                break;
-
-            case R.id.button_role_central:
-                intent = new Intent(this, CentralRoleActivity.class);
-                break;
-
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        if (intent != null) {
-            startActivity(intent);
-        }
-    }
-
-
-    private void enableNavigation() {
-        mPeripheralButton.setEnabled(true);
-        mCentralButton.setEnabled(true);
-    }
-
-
-    private void showErrorText(int string) {
-        Snackbar snackbar = Snackbar.make(mPeripheralButton, string, Snackbar.LENGTH_LONG);
-        snackbar.show();
+        mToolbar.setNavigationOnClickListener(view -> onBackButtonClicked());
+        mToolbar.setTitle(getTitleString());
+        mToolbar.setTitleTextColor(Color.WHITE);
     }
 
 }

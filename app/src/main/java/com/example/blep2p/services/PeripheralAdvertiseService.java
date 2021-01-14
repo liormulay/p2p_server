@@ -15,9 +15,10 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import com.example.blep2p.Constants;
-import com.example.blep2p.views.activities.MainActivity;
 
 import java.util.concurrent.TimeUnit;
+
+import static com.example.blep2p.activities.BluetoothActivity.TAG;
 
 public class PeripheralAdvertiseService extends Service {
 
@@ -107,7 +108,7 @@ public class PeripheralAdvertiseService extends Service {
      */
     private void startAdvertising() {
 
-        Log.d(MainActivity.TAG, "Service: Starting Advertising");
+        Log.d(TAG, "Service: Starting Advertising");
 
         if (mAdvertiseCallback == null) {
             AdvertiseSettings settings = buildAdvertiseSettings();
@@ -177,14 +178,14 @@ public class PeripheralAdvertiseService extends Service {
         @Override
         public void onStartFailure(int errorCode) {
             super.onStartFailure(errorCode);
-            Log.d(MainActivity.TAG, "Advertising failed");
+            Log.d(TAG, "Advertising failed");
             stopSelf();
         }
 
         @Override
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
             super.onStartSuccess(settingsInEffect);
-            Log.d(MainActivity.TAG, "Advertising successfully started");
+            Log.d(TAG, "Advertising successfully started");
         }
     }
 

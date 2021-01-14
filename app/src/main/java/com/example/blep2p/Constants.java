@@ -4,10 +4,6 @@ import java.util.UUID;
 
 public class Constants {
 
-
-    public static final int SERVER_MSG_FIRST_STATE = 1;
-    public static final int SERVER_MSG_SECOND_STATE = 2;
-
     /*
     better to use different Bluetooth Service,
     instead of Heart Rate Service:

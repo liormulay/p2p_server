@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BLE P2P</string>
+    <string name="app_name">P2P server</string>
     <string name="choose_app_role">Choose the device role:</string>
     <string name="button_role_peripheral">Peripheral/Server</string>
     <string name="button_role_central">Central/Client</string>
