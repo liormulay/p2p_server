@@ -45,7 +45,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
 
     private BluetoothManager mBluetoothManager;
     private BluetoothGattServer mGattServer;
-    private HashSet<BluetoothDevice> mBluetoothDevices;
+    private BluetoothDevice mBluetoothDevice;
 
     private AppCompatButton mNotifyButton;
     private SwitchCompat mEnableAdvertisementSwitch;
@@ -143,7 +143,6 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
 
     private void setGattServer() {
 
-        mBluetoothDevices = new HashSet<>();
         mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 
         if (mBluetoothManager != null) {
@@ -202,10 +201,8 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
          */
         boolean indicate = (mSampleCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) == BluetoothGattCharacteristic.PROPERTY_INDICATE;
 
-        for (BluetoothDevice device : mBluetoothDevices) {
-            if (mGattServer != null) {
-                mGattServer.notifyCharacteristicChanged(device, mSampleCharacteristic, indicate);
-            }
+        if (mGattServer != null && mBluetoothDevice != null) {
+            mGattServer.notifyCharacteristicChanged(mBluetoothDevice, mSampleCharacteristic, indicate);
         }
     }
 
@@ -230,7 +227,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
 
                 if (newState == BluetoothGatt.STATE_CONNECTED) {
 
-                    mBluetoothDevices.add(device);
+                    mBluetoothDevice = device;
 
                     msg = "Connected to device: " + device.getAddress();
                     Log.v(TAG, msg);
@@ -238,7 +235,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
 
                 } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
 
-                    mBluetoothDevices.remove(device);
+                    mBluetoothDevice = null;
 
                     msg = "Disconnected from device";
                     Log.v(TAG, msg);
@@ -246,7 +243,7 @@ public class PeripheralRoleActivity extends BluetoothActivity implements View.On
                 }
 
             } else {
-                mBluetoothDevices.remove(device);
+                mBluetoothDevice = null;
 
                 msg = getString(R.string.status_error_when_connecting) + ": " + status;
                 Log.e(TAG, msg);
