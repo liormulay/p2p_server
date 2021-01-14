@@ -19,6 +19,9 @@ import com.example.blep2p.views.activities.MainActivity;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+
 import static com.example.blep2p.Constants.BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID;
 
 public class CentralService extends Service {
@@ -41,6 +44,11 @@ public class CentralService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
     private int mConnectionState = STATE_DISCONNECTED;
+    private final BehaviorSubject<Integer> rssiSubject = BehaviorSubject.create();
+
+    public Observable<Integer> getRssi() {
+        return rssiSubject.hide();
+    }
 
 
     /*
@@ -50,10 +58,16 @@ public class CentralService extends Service {
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
 
         @Override
+        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+            super.onReadRemoteRssi(gatt, rssi, status);
+            rssiSubject.onNext(rssi);
+        }
+
+        @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
 
             String intentAction;
-
+            mBluetoothGatt.readRemoteRssi();
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 intentAction = ACTION_GATT_CONNECTED;
                 mConnectionState = STATE_CONNECTED;
@@ -68,6 +82,8 @@ public class CentralService extends Service {
                 Log.i(MainActivity.TAG, "Disconnected from GATT server.");
                 broadcastUpdate(intentAction);
             }
+
+
         }
 
         @Override
@@ -113,7 +129,7 @@ public class CentralService extends Service {
         if (BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID.equals(characteristic.getUuid())) {
 
             String msg = characteristic.getStringValue(0);
-            Log.d(MainActivity.TAG, "message: "+ msg);
+            Log.d(MainActivity.TAG, "message: " + msg);
             intent.putExtra(EXTRA_DATA, msg);
 
         } else {
@@ -192,11 +208,10 @@ public class CentralService extends Service {
      * Connects to the GATT server hosted on the Bluetooth LE device.
      *
      * @param address The device address of the destination device.
-     *
      * @return Return true if the connection is initiated successfully. The connection result
-     *         is reported asynchronously through the
-     *         {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
-     *         callback.
+     * is reported asynchronously through the
+     * {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
+     * callback.
      */
     public boolean connect(final String address) {
 
@@ -225,6 +240,7 @@ public class CentralService extends Service {
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
         mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
+        mBluetoothGatt.readRemoteRssi();
         mBluetoothDeviceAddress = address;
         mConnectionState = STATE_CONNECTING;
 
@@ -235,6 +251,7 @@ public class CentralService extends Service {
 
 
     // TODO bluetooth - call this method when needed
+
     /**
      * Disconnects an existing connection or cancel a pending connection. The disconnection result
      * is reported asynchronously through the
@@ -266,7 +283,6 @@ public class CentralService extends Service {
     }
 
 
-
     /**
      * Request a read on a given {@code BluetoothGattCharacteristic}. The read result is reported
      * asynchronously through the {@code BluetoothGattCallback#onCharacteristicRead(android.bluetooth.BluetoothGatt, android.bluetooth.BluetoothGattCharacteristic, int)}
@@ -288,7 +304,7 @@ public class CentralService extends Service {
      * Enables or disables notification on a give characteristic.
      *
      * @param characteristic Characteristic to act on.
-     * @param enabled If true, enable notification.  False otherwise.
+     * @param enabled        If true, enable notification.  False otherwise.
      */
     public void setCharacteristicNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
 

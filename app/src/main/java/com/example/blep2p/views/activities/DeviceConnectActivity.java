@@ -10,19 +10,22 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
 
-import com.example.blep2p.services.CentralService;
 import com.example.blep2p.R;
+import com.example.blep2p.services.CentralService;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import static com.example.blep2p.Constants.BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID;
 import static com.example.blep2p.Constants.HEART_RATE_SERVICE_UUID;
@@ -31,7 +34,6 @@ import static com.example.blep2p.Constants.HEART_RATE_SERVICE_UUID;
 public class DeviceConnectActivity extends BluetoothActivity implements View.OnClickListener {
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
-    public static final String EXTRAS_DEVICE_RSSI = "DEVICE_RSSI";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
 
@@ -40,7 +42,6 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
     private BluetoothGattCharacteristic mCharacteristic;
 
     private String mDeviceName;
-    private String rssi;
     private String mDeviceAddress;
 
     private AppCompatTextView mConnectionStatus;
@@ -48,6 +49,8 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
     private AppCompatTextView rssiTextView;
     private AppCompatTextView characteristicTextView;
     private AppCompatButton mRequestReadCharacteristic;
+
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
 
     @Override
@@ -61,7 +64,6 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
         if (intent != null) {
             mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
             mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-            rssi = intent.getStringExtra(EXTRAS_DEVICE_RSSI);
         }
 
 
@@ -77,12 +79,6 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
             mConnectedDeviceName.setText("");
         } else {
             mConnectedDeviceName.setText(mDeviceName);
-        }
-
-        if (Strings.isNullOrEmpty(rssi)) {
-            rssiTextView.setText("");
-        } else {
-            rssiTextView.setText(rssi);
         }
 
 
@@ -109,6 +105,7 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        compositeDisposable.clear();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
     }
@@ -158,6 +155,11 @@ public class DeviceConnectActivity extends BluetoothActivity implements View.OnC
                 Log.e(MainActivity.TAG, "Unable to initialize Bluetooth");
                 finish();
             }
+
+            compositeDisposable.add(mBluetoothLeService.getRssi()
+                    .observeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(rssi -> rssiTextView.setText(String.valueOf(rssi))));
 
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(mDeviceAddress);
